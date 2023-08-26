@@ -1,12 +1,41 @@
 <template>
-  <div class="container">
-    <router-view />
+  <div id="app">
+    <div class="container p-p-4">
+      <app-header />
+
+      <main>
+        <router-view>
+          <template v-slot="{ Component }">
+            <slide-fade-animation class="animate__faster">
+              <component :is="Component" :key="$route.fullPath" />
+            </slide-fade-animation>
+          </template>
+        </router-view>
+      </main>
+
+      <app-footer />
+    </div>
   </div>
 </template>
 
 <script>
+import AppHeader from '@/components/layouts/theHeader'
+import AppFooter from '@/components/layouts/theFooter'
+import { mapActions } from 'vuex'
+import SlideFadeAnimation from './components/layouts/SlideFadeAnimation.vue'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    AppFooter,
+    AppHeader,
+    SlideFadeAnimation
+  },
+  methods: {
+    ...mapActions(['fetchCategories'])
+  },
+  created() {
+    this.fetchCategories()
+  }
 }
 </script>
 

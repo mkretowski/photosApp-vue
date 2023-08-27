@@ -83,7 +83,7 @@ export default {
     ProgressSpinner
   },
   computed: {
-    ...mapState(['voteRequest'])
+    ...mapState('Photos', ['voteRequest'])
   }
 }
 </script>

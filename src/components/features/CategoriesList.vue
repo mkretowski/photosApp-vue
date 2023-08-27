@@ -17,6 +17,6 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'CategoriesList',
   components: { Button },
-  computed: mapGetters({ categories: 'categories' })
+  computed: mapGetters({ categories: 'Categories/categories' })
 }
 </script>

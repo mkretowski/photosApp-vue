@@ -11,6 +11,6 @@
 import { mapGetters } from 'vuex'
 export default {
   name: 'AppFooter',
-  computed: mapGetters({ categoriesAmount: 'categoriesAmount' })
+  computed: mapGetters({ categoriesAmount: 'Categories/categoriesAmount' })
 }
 </script>

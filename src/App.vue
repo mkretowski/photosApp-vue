@@ -31,7 +31,7 @@ export default {
     SlideFadeAnimation
   },
   methods: {
-    ...mapActions(['fetchCategories'])
+    ...mapActions('Categories', ['fetchCategories'])
   },
   created() {
     this.fetchCategories()

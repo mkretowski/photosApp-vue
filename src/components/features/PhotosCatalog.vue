@@ -2,7 +2,7 @@
   <div ref="catalog" class="catalog">
     <!-- photos list -->
     <photos-list
-      v-show="!photosRequest.pending"
+      v-if="!photosRequest.pending || currentPage >= 2"
       :photos="photos"
       @vote="vote"
     />
@@ -14,6 +14,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import PhotosList from '../shared/PhotosList.vue'
 import ProgressSpinner from 'primevue/progressspinner'
@@ -35,16 +36,18 @@ export default {
     currentPage: 1
   }),
   methods: {
-    ...mapActions(['fetchPhotos', 'fetchCategoryPhotos', 'addVote']),
+    ...mapActions('Photos', ['fetchPhotos', 'fetchCategoryPhotos', 'addVote']),
     loadPhotos() {
-      this.currentPage++
-      if (!this.category) {
-        this.fetchPhotos(this.currentPage)
-      } else {
-        this.fetchCategoryPhotos({
-          category: this.category,
-          page: this.currentPage
-        })
+      if (!this.allPhotosLoaded) {
+        this.currentPage++
+        if (!this.category) {
+          this.fetchPhotos(this.currentPage)
+        } else {
+          this.fetchCategoryPhotos({
+            category: this.category,
+            page: this.currentPage
+          })
+        }
       }
     },
     prepareScroll() {
@@ -57,7 +60,9 @@ export default {
       const bottomOfWindow =
         Math.ceil(elem.scrollTop) >= elem.scrollHeight - elem.offsetHeight
 
-      if (bottomOfWindow) this.loadPhotos()
+      if (bottomOfWindow && !this.photosRequest.pending) {
+        this.loadPhotos()
+      }
     },
     vote(index) {
       this.addVote(index)
@@ -71,14 +76,14 @@ export default {
     this.prepareScroll()
   },
   computed: {
-    ...mapGetters({ photos: 'photos' }),
-    ...mapState(['photosRequest'])
+    ...mapGetters({ photos: 'Photos/photos' }),
+    ...mapState('Photos', ['photosRequest'])
   }
 }
 </script>
 <style lang="scss">
 .catalog {
-  max-height: 1000px;
+  height: 800px;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 15px;

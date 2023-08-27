@@ -1,7 +1,11 @@
 <template>
   <div ref="catalog" class="catalog">
     <!-- photos list -->
-    <photos-list :photos="photos" @vote="vote" />
+    <photos-list
+      v-show="!photosRequest.pending"
+      :photos="photos"
+      @vote="vote"
+    />
     <div class="loader" v-show="photosRequest.pending">
       <progress-spinner />
     </div>

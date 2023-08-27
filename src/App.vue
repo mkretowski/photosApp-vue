@@ -4,12 +4,12 @@
       <app-header />
 
       <main>
-        <router-view>
-          <template v-slot="{ Component }">
-            <slide-fade-animation>
-              <component :is="Component" :key="$route.fullPath" />
-            </slide-fade-animation>
-          </template>
+        <router-view v-slot="{ Component }">
+          <slide-fade-animation>
+            <transition>
+              <div :key="$route.fullPath"><component :is="Component" /></div>
+            </transition>
+          </slide-fade-animation>
         </router-view>
       </main>
 

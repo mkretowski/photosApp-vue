@@ -96,7 +96,6 @@ export default createStore({
       commit('UPDATE_CATEGORIES', res.data)
     },
     async fetchPhotosFromAPI({ commit, state }, { url, page }) {
-      console.log(page)
       try {
         // if it's first set of photos and allPhotosLoaded is true => make it default false
         if (state.allPhotosLoaded && page === 1) {

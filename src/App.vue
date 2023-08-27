@@ -6,7 +6,7 @@
       <main>
         <router-view>
           <template v-slot="{ Component }">
-            <slide-fade-animation class="animate__faster">
+            <slide-fade-animation>
               <component :is="Component" :key="$route.fullPath" />
             </slide-fade-animation>
           </template>
@@ -41,7 +41,7 @@ export default {
 
 <style lang="scss">
 .container {
-  max-width: 800px;
+  max-width: 1400px;
   margin: 0 auto;
   text-align: center;
   padding: 2rem;

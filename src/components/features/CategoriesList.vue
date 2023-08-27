@@ -12,8 +12,8 @@
 
 <script>
 import Button from 'primevue/button'
-
 import { mapGetters } from 'vuex'
+
 export default {
   name: 'CategoriesList',
   components: { Button },

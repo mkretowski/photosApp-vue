@@ -28,9 +28,12 @@
             </div>
             <image-item :src="src" class="h-full" style="object-fit: cover" />
           </div>
+
           <div class="flex flex-column my-auto">
-            <SmallTitle>{{ title }}</SmallTitle>
-            <p>by {{ author }}</p>
+            <a class="info" @click="redirect">
+              <SmallTitle>{{ title }}</SmallTitle>
+              <p>by {{ author }}</p></a
+            >
           </div>
           <div class="flex mt-auto align-items-start">
             <Button
@@ -56,6 +59,9 @@ import { mapState } from 'vuex'
 export default {
   name: 'PhotoSummary',
   props: {
+    id: {
+      type: String
+    },
     author: {
       type: String
     },
@@ -84,6 +90,12 @@ export default {
   },
   computed: {
     ...mapState('Photos', ['voteRequest'])
+  },
+  methods: {
+    redirect() {
+      if (this.$route.fullPath === '/') this.$router.push(`${this.id}`)
+      else this.$router.push(`${this.$route.fullPath}/${this.id}`)
+    }
   }
 }
 </script>
@@ -141,5 +153,8 @@ export default {
 }
 .image-container:hover .layer {
   opacity: 1;
+}
+.info {
+  cursor: pointer;
 }
 </style>

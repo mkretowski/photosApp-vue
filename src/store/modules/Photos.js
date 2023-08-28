@@ -14,7 +14,8 @@ export default {
       error: false,
       success: false
     },
-    allPhotosLoaded: false
+    allPhotosLoaded: false,
+    singlePhoto: ''
   },
   getters: {
     photos(state) {
@@ -78,6 +79,9 @@ export default {
       if (index !== -1) {
         state.photos[index].votes += 1
       }
+    },
+    SET_SINGLE_PHOTO(state, photo) {
+      state.singlePhoto = photo
     }
   },
   actions: {
@@ -131,6 +135,19 @@ export default {
         }
       } catch (error) {
         commit('ERROR_VOTE_REQUEST')
+      }
+    },
+    async fetchSinglePhoto({ commit }, photoId) {
+      try {
+        const response = await axios.get(`${apiUrl}/photos/id/${photoId}`)
+        await new Promise((resolve, reject) => {
+          setTimeout(resolve, 2000)
+        })
+        if (response.status === 200) {
+          commit('SET_SINGLE_PHOTO', response.data)
+        }
+      } catch (error) {
+        console.log(error)
       }
     }
   },

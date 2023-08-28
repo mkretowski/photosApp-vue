@@ -3,7 +3,7 @@
     <router-link
       :key="index"
       v-for="(category, index) in categories"
-      :to="{ name: 'CategoryPhotosPage', params: { category: category.name } }"
+      :to="`/photos/${category.name}`"
     >
       <Button :label="category.name" rounded outlined />
     </router-link>

@@ -5,11 +5,11 @@
 
       <main>
         <router-view v-slot="{ Component }">
-          <slide-fade-animation>
-            <transition>
-              <div :key="$route.fullPath"><component :is="Component" /></div>
-            </transition>
-          </slide-fade-animation>
+          <SlideFadeAnimation>
+            <div :key="$route.fullPath">
+              <component :is="Component" />
+            </div>
+          </SlideFadeAnimation>
         </router-view>
       </main>
 
@@ -31,7 +31,11 @@ export default {
     SlideFadeAnimation
   },
   methods: {
-    ...mapActions('Categories', ['fetchCategories'])
+    ...mapActions('Categories', ['fetchCategories']),
+    getComponentName(Component) {
+      console.log(Component.type.name)
+      return Component.type.name
+    }
   },
   created() {
     this.fetchCategories()

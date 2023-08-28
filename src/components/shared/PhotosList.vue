@@ -3,6 +3,7 @@
     <PhotoSummary
       :key="index"
       v-for="(photo, index) in photos"
+      :id="photo._id"
       :author="photo.author"
       :email="photo.email"
       :title="photo.title"

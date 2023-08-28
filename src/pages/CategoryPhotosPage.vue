@@ -2,6 +2,7 @@
   <div>
     <PageTitle>{{ category }}</PageTitle>
     <PhotosCatalog :category="category" />
+    <router-view />
   </div>
 </template>
 

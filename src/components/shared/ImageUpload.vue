@@ -1,10 +1,10 @@
 <template>
-  <div class="input-field">
+  <div class="input-field flex col justify-content-center">
     <div class="input-field__loader" v-if="!conditionals.imageLoaded">
       <progress-spinner />
     </div>
 
-    <label class="image-upload">
+    <label class="image-upload col">
       <!-- file input -->
       <input type="file" name="file" id="file" @change="onFileSelected" />
 

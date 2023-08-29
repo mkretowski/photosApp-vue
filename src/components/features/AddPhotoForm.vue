@@ -1,54 +1,63 @@
 <template>
-  <form>
+  <Form v-slot="{ errors }" @submit="handleSubmit">
     <div class="flex flex-row">
       <div class="flex flex-column col-6 m-2">
         <!-- title -->
-        <div class="flex flex-column gap-2 m-2">
-          <label for="title">Title</label>
-          <InputText id="title" type="text" v-model="form.title" />
-        </div>
-
+        <Field name="title" v-slot="{ field }" rules="required|min:10|max:60">
+          <label>Title</label>
+          <InputText v-bind="field" type="text" v-model="form.title" />
+          <span class="error text-red-500">{{ errors.title }}</span>
+        </Field>
         <!-- author -->
-        <div class="flex flex-column gap-2 m-2">
-          <label for="author">Author</label>
-          <InputText id="author" type="text" v-model="form.author" />
-        </div>
-
+        <Field name="author" v-slot="{ field }" rules="required|min:3|max:30">
+          <label>Author</label>
+          <InputText v-bind="field" type="text" v-model="form.author" />
+          <span class="error text-red-500">{{ errors.author }}</span>
+        </Field>
         <!-- category -->
-        <div class="flex flex-column gap-2 m-2">
-          <label for="category">Category</label>
+        <Field name="category" v-slot="{ field }" rules="required">
+          <label>Category</label>
           <ListBox
             id="category"
+            v-bind="field"
             v-model="form.category"
             :options="categoryOptions"
           />
-        </div>
+          <span class="error text-red-500">{{ errors.category }}</span>
+        </Field>
 
         <!-- description -->
-        <div class="flex flex-column gap-2 m-2">
-          <label for="description">Description</label>
+        <Field name="description" v-slot="{ field }" rules="required|max:100">
+          <label>Description</label>
           <Textarea
             id="description"
             rows="5"
             cols="30"
+            v-bind="field"
             v-model="form.description"
           />
-        </div>
+          <span class="error text-red-500">{{ errors.description }}</span>
+        </Field>
+
         <div class="flex gap-2 m-2">
           <Button
             class="p-button-rounded p-button-success p-mt-3"
             type="submit"
             label="Add"
             icon="pi pi-plus"
-            @click="handleSubmit"
           />
         </div>
       </div>
-      <div class="flex col-6 align-items-center">
-        <ImageUpload class="w-full" @choose="handleImageChoose" />
+      <div class="flex flex-column col-6 text-center">
+        <Field v-slot="{ field }" rules="required|ext:png,jpg" name="image">
+          <div class="error-text text-red-500 pt-5 pb-0">
+            {{ errors.image }}
+          </div>
+          <ImageUpload v-bind="field" @choose="handleImageChoose" />
+        </Field>
       </div>
     </div>
-  </form>
+  </Form>
   <Message v-if="isSuccess" severity="success"
     >Success! Your photo has been submitted</Message
   >
@@ -67,6 +76,26 @@ import Message from 'primevue/message'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 import { apiUrl } from '@/config'
+import { Form, Field, defineRule } from 'vee-validate'
+import { required, min, max, ext } from '@vee-validate/rules'
+defineRule(
+  'required',
+  (value) => required(value) || 'This field is so so required...'
+)
+defineRule(
+  'min',
+  (value, params) => min(value, params) || `It should be longer than ${params}`
+)
+defineRule(
+  'max',
+  (value, params) => max(value, params) || `It should be shorter than ${params}`
+)
+defineRule(
+  'ext',
+  (value, params) =>
+    ext(value, params) || `You should use one of these extensions: ${params}`
+)
+
 export default {
   name: 'AddPhotoForm',
   data: () => ({
@@ -86,14 +115,15 @@ export default {
     Textarea,
     ListBox,
     ImageUpload,
-    Message
+    Message,
+    Form,
+    Field
   },
   methods: {
     handleImageChoose(file) {
       this.form.file = file
     },
-    async handleSubmit(e) {
-      e.preventDefault()
+    async handleSubmit() {
       this.isSuccess = false
       this.isError = false
 

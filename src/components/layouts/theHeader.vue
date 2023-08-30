@@ -5,8 +5,9 @@
         <SmallTitle>PhotosApp |</SmallTitle>
         <p>share your moments</p>
       </a>
-
-      <Button icon="pi pi-plus" label="Submit" rounded />
+      <router-link :to="'/add-photo'">
+        <Button icon="pi pi-plus" label="Submit" rounded />
+      </router-link>
     </div>
     <div>
       <CategoriesList></CategoriesList>

@@ -73,11 +73,12 @@ import Textarea from 'primevue/textarea'
 import ListBox from 'primevue/listbox'
 import ImageUpload from '../shared/ImageUpload.vue'
 import Message from 'primevue/message'
-import { mapGetters } from 'vuex'
+import { ref, computed, reactive } from 'vue'
 import axios from 'axios'
 import { apiUrl } from '@/config'
 import { Form, Field, defineRule } from 'vee-validate'
 import { required, min, max, ext } from '@vee-validate/rules'
+import { useStore } from 'vuex'
 defineRule(
   'required',
   (value) => required(value) || 'This field is so so required...'
@@ -98,17 +99,6 @@ defineRule(
 
 export default {
   name: 'AddPhotoForm',
-  data: () => ({
-    form: {
-      title: '',
-      author: '',
-      description: '',
-      category: '',
-      file: null
-    },
-    isSuccess: false,
-    isError: false
-  }),
   components: {
     Button,
     InputText,
@@ -119,22 +109,39 @@ export default {
     Form,
     Field
   },
-  methods: {
-    handleImageChoose(file) {
-      this.form.file = file
-    },
-    async handleSubmit() {
-      this.isSuccess = false
-      this.isError = false
+
+  setup() {
+    const store = useStore()
+    const initialState = {
+      title: '',
+      author: '',
+      description: '',
+      category: '',
+      file: null
+    }
+    const form = reactive({
+      ...initialState
+    })
+    const isSuccess = ref(false)
+    const isError = ref(false)
+
+    const handleImageChoose = (file) => {
+      form.file = file
+    }
+
+    // eslint-disable-next-line space-before-function-paren
+    const handleSubmit = async () => {
+      isSuccess.value = false
+      isError.value = false
 
       const formData = new FormData()
-      formData.append('title', this.form.title)
-      formData.append('author', this.form.author)
-      formData.append('description', this.form.description)
-      formData.append('category', this.form.category)
+      formData.append('title', form.title)
+      formData.append('author', form.author)
+      formData.append('description', form.description)
+      formData.append('category', form.category)
 
-      if (this.form.file) {
-        formData.append('file', this.form.file)
+      if (form.file) {
+        formData.append('file', form.file)
       }
 
       try {
@@ -143,25 +150,32 @@ export default {
             'Content-Type': 'multipart/form-data'
           }
         })
-        this.isSuccess = true
-        this.clearForm()
+        isSuccess.value = true
+        clearForm()
       } catch (error) {
-        this.isError = true
-        console.log(error)
+        isError.value = true
+        console.error(error)
       }
-    },
-    clearForm() {
-      this.form.title = ''
-      this.form.author = ''
-      this.form.description = ''
-      this.form.category = ''
-      this.form.file = null
     }
-  },
-  computed: {
-    ...mapGetters({ categories: 'Categories/categories' }),
-    categoryOptions() {
-      return this.categories.map((category) => category.name)
+
+    const clearForm = () => {
+      Object.assign(form, initialState)
+    }
+
+    const categories = computed(() => store.state.Categories.categories)
+    const categoryOptions = computed(() => {
+      return categories.value.map((category) => category.name)
+    })
+
+    return {
+      form,
+      isSuccess,
+      isError,
+      handleImageChoose,
+      handleSubmit,
+      categories,
+      categoryOptions,
+      clearForm
     }
   }
 }

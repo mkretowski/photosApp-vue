@@ -2,14 +2,14 @@
   <div ref="catalog" class="catalog">
     <!-- photos list -->
     <photos-list
-      v-if="!photosRequest.pending || currentPage >= 2"
-      :photos="photos"
+      v-if="!photosStore.photosRequest.pending || currentPage >= 2"
+      :photos="photosStore.photos"
       @vote="vote"
     />
-    <div class="loader" v-show="photosRequest.pending">
+    <div class="loader" v-show="photosStore.photosRequest.pending">
       <progress-spinner />
     </div>
-    <div v-show="photosRequest.error">
+    <div v-show="photosStore.photosRequest.error">
       <Message severity="warn">Error! Try again…</Message>
     </div>
   </div>
@@ -19,7 +19,9 @@
 import PhotosList from '../shared/PhotosList.vue'
 import ProgressSpinner from 'primevue/progressspinner'
 import Message from 'primevue/message'
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { useStore } from 'vuex'
+import { ref, onMounted, computed, reactive } from 'vue'
+
 export default {
   name: 'PhotosCatalog',
   props: {
@@ -32,52 +34,77 @@ export default {
     ProgressSpinner,
     Message
   },
-  data: () => ({
-    currentPage: 1
-  }),
-  methods: {
-    ...mapActions('Photos', ['fetchPhotos', 'fetchCategoryPhotos', 'addVote']),
-    loadPhotos() {
-      if (!this.allPhotosLoaded) {
-        this.currentPage++
-        if (!this.category) {
-          this.fetchPhotos(this.currentPage)
+
+  setup(props) {
+    const currentPage = ref(1)
+    const store = useStore()
+
+    const catalogRef = ref(document.querySelector('.catalog'))
+    const photosStore = reactive({
+      photos: computed(() => store.state.Photos.photos),
+      photosRequest: computed(() => store.state.Photos.photosRequest),
+      allPhotosLoaded: computed(() => store.state.Photos.allPhotosLoaded)
+    })
+    const fetchPhotos = (page) => store.dispatch('Photos/fetchPhotos', page)
+    const fetchCategoryPhotos = () => {
+      store.dispatch('Photos/fetchCategoryPhotos', {
+        category: props.category,
+        page: currentPage.value
+      })
+    }
+    const addVote = (photoId) => store.dispatch('Photos/addVote', photoId)
+
+    const loadPhotos = () => {
+      if (!photosStore.allPhotosLoaded) {
+        currentPage.value++
+        if (!props.category) {
+          fetchPhotos(currentPage.value)
         } else {
-          this.fetchCategoryPhotos({
-            category: this.category,
-            page: this.currentPage
+          fetchCategoryPhotos({
+            category: props.category,
+            page: currentPage.value
           })
         }
       }
-    },
-    prepareScroll() {
-      this.$refs.catalog.addEventListener('scroll', () => {
-        this.handleScroll()
-      })
-    },
-    handleScroll() {
-      const elem = this.$refs.catalog
-      const bottomOfWindow =
-        Math.ceil(elem.scrollTop) >= elem.scrollHeight - elem.offsetHeight
-
-      if (bottomOfWindow && !this.photosRequest.pending) {
-        this.loadPhotos()
-      }
-    },
-    vote(index) {
-      this.addVote(index)
     }
-  },
-  created() {
-    if (!this.category) this.fetchPhotos(1)
-    else this.fetchCategoryPhotos({ category: this.category, page: 1 })
-  },
-  mounted() {
-    this.prepareScroll()
-  },
-  computed: {
-    ...mapGetters({ photos: 'Photos/photos' }),
-    ...mapState('Photos', ['photosRequest'])
+    const prepareScroll = () => {
+      catalogRef.value.addEventListener('scroll', () => {
+        handleScroll()
+      })
+    }
+    const handleScroll = () => {
+      const bottomOfWindow =
+        Math.ceil(catalogRef.value.scrollTop) >=
+        catalogRef.value.scrollHeight - catalogRef.value.offsetHeight
+
+      if (bottomOfWindow && !photosStore.photosRequest.pending) {
+        loadPhotos()
+      }
+    }
+    const vote = (index) => {
+      addVote(index)
+    }
+
+    onMounted(() => {
+      catalogRef.value = document.querySelector('.catalog')
+      if (!props.category) {
+        fetchPhotos()
+      } else {
+        fetchCategoryPhotos()
+      }
+      prepareScroll()
+    })
+    return {
+      currentPage,
+      loadPhotos,
+      prepareScroll,
+      handleScroll,
+      vote,
+      fetchPhotos,
+      fetchCategoryPhotos,
+      addVote,
+      photosStore
+    }
   }
 }
 </script>

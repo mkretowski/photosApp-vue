@@ -1,17 +1,29 @@
 <template>
-  <Form v-slot="{ errors }" @submit="handleSubmit">
+  <Form v-slot="{ errors }" ref="anyname" @submit="handleSubmit">
     <div class="flex flex-row">
       <div class="flex flex-column col-6 m-2">
         <!-- title -->
-        <Field name="title" v-slot="{ field }" rules="required|min:10|max:60">
+        <Field
+          name="title"
+          type="text"
+          v-model="form.title"
+          v-slot="{ field }"
+          rules="required|min:10|max:60"
+        >
           <label>Title</label>
-          <InputText v-bind="field" type="text" v-model="form.title" />
+          <InputText v-bind="field" />
           <span class="error text-red-500">{{ errors.title }}</span>
         </Field>
         <!-- author -->
-        <Field name="author" v-slot="{ field }" rules="required|min:3|max:30">
+        <Field
+          name="author"
+          type="text"
+          v-model="form.author"
+          v-slot="{ field }"
+          rules="required|min:3|max:30"
+        >
           <label>Author</label>
-          <InputText v-bind="field" type="text" v-model="form.author" />
+          <InputText v-bind="field" />
           <span class="error text-red-500">{{ errors.author }}</span>
         </Field>
         <!-- category -->
@@ -27,15 +39,14 @@
         </Field>
 
         <!-- description -->
-        <Field name="description" v-slot="{ field }" rules="required|max:100">
+        <Field
+          name="description"
+          v-model="form.description"
+          v-slot="{ field }"
+          rules="required|max:100"
+        >
           <label>Description</label>
-          <Textarea
-            id="description"
-            rows="5"
-            cols="30"
-            v-bind="field"
-            v-model="form.description"
-          />
+          <Textarea id="description" rows="5" cols="30" v-bind="field" />
           <span class="error text-red-500">{{ errors.description }}</span>
         </Field>
 
@@ -53,7 +64,11 @@
           <div class="error-text text-red-500 pt-5 pb-0">
             {{ errors.image }}
           </div>
-          <ImageUpload v-bind="field" @choose="handleImageChoose" />
+          <ImageUpload
+            v-bind="field"
+            @choose="handleImageChoose"
+            ref="imageUploadRef"
+          />
         </Field>
       </div>
     </div>
@@ -124,7 +139,7 @@ export default {
     })
     const isSuccess = ref(false)
     const isError = ref(false)
-
+    const imageUploadRef = ref(null)
     const handleImageChoose = (file) => {
       form.file = file
     }
@@ -133,7 +148,6 @@ export default {
     const handleSubmit = async () => {
       isSuccess.value = false
       isError.value = false
-
       const formData = new FormData()
       formData.append('title', form.title)
       formData.append('author', form.author)
@@ -160,6 +174,7 @@ export default {
 
     const clearForm = () => {
       Object.assign(form, initialState)
+      imageUploadRef.value.clearFileInput()
     }
 
     const categories = computed(() => store.state.Categories.categories)
@@ -175,7 +190,8 @@ export default {
       handleSubmit,
       categories,
       categoryOptions,
-      clearForm
+      clearForm,
+      imageUploadRef
     }
   }
 }

@@ -6,7 +6,13 @@
 
     <label class="image-upload col">
       <!-- file input -->
-      <input type="file" name="file" id="file" @change="onFileSelected" />
+      <input
+        ref="fileInput"
+        type="file"
+        name="file"
+        id="file"
+        @change="onFileSelected"
+      />
 
       <!-- image preview -->
       <img
@@ -62,6 +68,15 @@ export default {
       }
 
       reader.readAsDataURL(event.target.files[0])
+    },
+    clearFileInput() {
+      this.image.path = ''
+      this.image.name = ''
+      this.image.file = null
+      const fileInput = this.$refs.fileInput
+      if (fileInput) {
+        fileInput.value = ''
+      }
     }
   },
   components: { ProgressSpinner }

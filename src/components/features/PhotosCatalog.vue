@@ -38,13 +38,13 @@ export default {
   setup(props) {
     const currentPage = ref(1)
     const store = useStore()
-
     const catalogRef = ref(document.querySelector('.catalog'))
     const photosStore = reactive({
       photos: computed(() => store.state.Photos.photos),
       photosRequest: computed(() => store.state.Photos.photosRequest),
       allPhotosLoaded: computed(() => store.state.Photos.allPhotosLoaded)
     })
+
     const fetchPhotos = (page) => store.dispatch('Photos/fetchPhotos', page)
     const fetchCategoryPhotos = () => {
       store.dispatch('Photos/fetchCategoryPhotos', {
@@ -84,7 +84,6 @@ export default {
     const vote = (index) => {
       addVote(index)
     }
-
     onMounted(() => {
       catalogRef.value = document.querySelector('.catalog')
       if (!props.category) {
@@ -94,15 +93,10 @@ export default {
       }
       prepareScroll()
     })
+
     return {
       currentPage,
-      loadPhotos,
-      prepareScroll,
-      handleScroll,
       vote,
-      fetchPhotos,
-      fetchCategoryPhotos,
-      addVote,
       photosStore
     }
   }

@@ -29,12 +29,13 @@
             <image-item :src="src" class="h-full" style="object-fit: cover" />
           </div>
 
-          <div class="flex flex-column my-auto">
-            <a class="info" @click="redirect">
+          <div class="flex flex-column my-auto cursor-pointer">
+            <a @click="redirect">
               <SmallTitle>{{ title }}</SmallTitle>
               <p>by {{ author }}</p></a
             >
           </div>
+
           <div class="flex mt-auto align-items-start">
             <Button
               class="text-sm p-2 m-3"
@@ -53,9 +54,9 @@
 import ImageItem from '../layouts/ImageItem.vue'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
-import SmallTitle from '../layouts/SmallTitle.vue'
 import ProgressSpinner from 'primevue/progressspinner'
 import { mapState } from 'vuex'
+import SmallTitle from '../layouts/SmallTitle.vue'
 export default {
   name: 'PhotoSummary',
   props: {
@@ -85,8 +86,8 @@ export default {
     ImageItem,
     Card,
     Button,
-    SmallTitle,
-    ProgressSpinner
+    ProgressSpinner,
+    SmallTitle
   },
   computed: {
     ...mapState('Photos', ['voteRequest'])

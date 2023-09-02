@@ -1,24 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import CategoryPhotosPage from '../pages/CategoryPhotosPage.vue'
-import AddPhotoPage from '../pages/AddPhotoPage.vue'
-import SinglePhotoPage from '../pages/SinglePhotoPage.vue'
-import SinglePhoto from '../components/features/SinglePhoto.vue'
 import HomePage from '../pages/HomePage.vue'
 const routes = [
   {
     path: '/add-photo',
     name: 'AddPhotoPage',
-    component: AddPhotoPage
+    component: () => import('../pages/AddPhotoPage.vue')
   },
   {
-    path: '/',
+    path: '',
     name: 'HomePage',
     component: HomePage,
     children: [
       {
         path: ':photoId',
-        name: 'SinglePhoto',
-        component: SinglePhoto
+        component: () => import('../pages/SinglePhotoPage.vue')
       }
     ]
   },
@@ -26,12 +21,11 @@ const routes = [
   {
     path: '/photos/:category',
     name: 'CategoryPhotosPage',
-    component: CategoryPhotosPage,
+    component: () => import('../pages/CategoryPhotosPage.vue'),
     children: [
       {
         path: ':photoId',
-        name: 'SinglePhotoPage',
-        component: SinglePhotoPage
+        component: () => import('../pages/SinglePhotoPage.vue')
       }
     ]
   }

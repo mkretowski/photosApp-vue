@@ -5,8 +5,8 @@
 
       <main>
         <router-view v-slot="{ Component }">
-          <SlideFadeAnimation>
-            <div :key="$route.fullPath">
+          <SlideFadeAnimation name="custom-transition" mode="out-in"
+            ><div :key="getComponentName(Component)">
               <component :is="Component" />
             </div>
           </SlideFadeAnimation>
@@ -33,8 +33,9 @@ export default {
   methods: {
     ...mapActions('Categories', ['fetchCategories']),
     getComponentName(Component) {
-      console.log(Component.type.name)
-      return Component.type.name
+      if (Component) {
+        return Component.type.name
+      } else return false
     }
   },
   created() {
@@ -49,5 +50,21 @@ export default {
   margin: 0 auto;
   text-align: center;
   padding: 2rem;
+}
+.nicee-enter-active {
+  position: absolute;
+  animation: opacityFromZero 0.4s ease-out;
+}
+.nicee-leave-active {
+  animation: opacityFromZero 0.4s ease-out reverse;
+}
+
+@keyframes opacityFromZero {
+  from {
+    left: -100%;
+  }
+  to {
+    left: 0;
+  }
 }
 </style>
